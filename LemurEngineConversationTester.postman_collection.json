@@ -1,0 +1,203 @@
+{
+	"info": {
+		"_postman_id": "6e46baae-65e2-4322-8f90-7e808f249304",
+		"name": "LemurEngineConversationTester",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Setup and Smoke Test",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//set up the test client...",
+							"var uuid = require('uuid');",
+							"",
+							"//set up the client ",
+							"pm.environment.set('test_client', uuid.v4());",
+							"",
+							"//set up the counter ",
+							"pm.environment.set('test_counter', 0);",
+							"",
+							"pm.environment.set('test_input', 'Start a new conversation')",
+							"pm.environment.set('expected_output', 'Hello.')",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var botresponse = JSON.parse(responseBody)",
+							"",
+							"pm.test(\"verify status is 200\", function(){",
+							"    pm.response.to.have.status(200)",
+							"})",
+							"",
+							"pm.test(\"verify success is true\", function(){",
+							"    pm.expect(botresponse.success).to.be.true",
+							"})",
+							"",
+							"pm.test(\"verify the input is correct\", function(){",
+							"    pm.expect(botresponse.data.conversation.input).to.equal(pm.environment.get('test_input'))",
+							"})",
+							"",
+							"pm.test(\"verify the output is correct\", function(){",
+							"    pm.expect(botresponse.data.conversation.output).to.equal(pm.environment.get('expected_output'))",
+							"})",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Bot-Key",
+						"type": "text",
+						"value": "f2198e59-ad89-48a5-8b5e-63f94a5c5245"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"client\":\"{{test_client}}\",\n  \"bot\":\"dilly\",\n  \"message\":\"{{test_input}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://lemurengine.local/api/talk/bot",
+					"protocol": "http",
+					"host": [
+						"lemurengine",
+						"local"
+					],
+					"path": [
+						"api",
+						"talk",
+						"bot"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BigTest",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//set up the tests",
+							"var conversationTests = [",
+							"    {\"input\": \"hello\",\"output\": \"Hi there!\"},",
+							"    {\"input\": \"What is your name\",\"output\": \"My name is Dilly\"},",
+							"    {\"input\": \"This will fail\",\"output\": \"fail\"}   ",
+							"]  ",
+							"",
+							"conversationTestCounter = pm.environment.get('test_counter');",
+							"",
+							"//set up the first params",
+							"pm.environment.set('test_input', conversationTests[conversationTestCounter].input)",
+							"pm.environment.set('expected_output', conversationTests[conversationTestCounter].output)",
+							"",
+							"console.log(\"Testing: \"+conversationTests[conversationTestCounter].input)",
+							"",
+							"    //increment the counter ",
+							"    conversationTestCounter++",
+							"    pm.environment.set('test_counter',conversationTestCounter);",
+							"",
+							"//if we still have some tests to run make sure we rerun",
+							"if(conversationTestCounter<conversationTests.length){",
+							"",
+							"    //rerun the test",
+							"    postman.setNextRequest('BigTest')",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var botresponse = JSON.parse(responseBody)",
+							"",
+							"pm.test(\"verify status is 200\", function(){",
+							"    pm.response.to.have.status(200)",
+							"})",
+							"",
+							"pm.test(\"verify success is true\", function(){",
+							"    pm.expect(botresponse.success).to.be.true",
+							"})",
+							"",
+							"pm.test(\"verify the input is correct\", function(){",
+							"    pm.expect(botresponse.data.conversation.input).to.equal(pm.environment.get('test_input'))",
+							"})",
+							"",
+							"pm.test(\"verify the output is correct\", function(){",
+							"    pm.expect(botresponse.data.conversation.output).to.equal(pm.environment.get('expected_output'))",
+							"})",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Bot-Key",
+						"type": "text",
+						"value": "f2198e59-ad89-48a5-8b5e-63f94a5c5245"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"client\":\"{{test_client}}\",\n  \"bot\":\"dilly\",\n  \"message\":\"{{test_input}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://lemurengine.local/api/talk/bot",
+					"protocol": "http",
+					"host": [
+						"lemurengine",
+						"local"
+					],
+					"path": [
+						"api",
+						"talk",
+						"bot"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
