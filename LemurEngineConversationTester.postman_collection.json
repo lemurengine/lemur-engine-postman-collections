@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6e46baae-65e2-4322-8f90-7e808f249304",
+		"_postman_id": "e1c606af-b959-47b0-8b8a-048063059506",
 		"name": "LemurEngineConversationTester",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -42,11 +42,11 @@
 							"    pm.expect(botresponse.success).to.be.true",
 							"})",
 							"",
-							"pm.test(\"verify the input is correct\", function(){",
+							"pm.test(\"verify the input is correct: \"+pm.environment.get('test_input'), function(){",
 							"    pm.expect(botresponse.data.conversation.input).to.equal(pm.environment.get('test_input'))",
 							"})",
 							"",
-							"pm.test(\"verify the output is correct\", function(){",
+							"pm.test(\"verify the output is correct: \"+pm.environment.get('expected_output'), function(){",
 							"    pm.expect(botresponse.data.conversation.output).to.equal(pm.environment.get('expected_output'))",
 							"})",
 							"",
@@ -104,8 +104,7 @@
 						"exec": [
 							"//set up the tests",
 							"var conversationTests = [",
-							"    {\"input\": \"hello\",\"output\": \"Hi there!\"},",
-							"    {\"input\": \"What is your name\",\"output\": \"My name is Dilly\"},",
+							"    {\"input\": \"start a new conversation\",\"output\": \"Hello.\"},",
 							"    {\"input\": \"This will fail\",\"output\": \"fail\"}   ",
 							"]  ",
 							"",
@@ -127,6 +126,8 @@
 							"    //rerun the test",
 							"    postman.setNextRequest('BigTest')",
 							"}",
+							"",
+							"console.log(\"Testing complete\")",
 							""
 						],
 						"type": "text/javascript"
@@ -137,6 +138,7 @@
 					"script": {
 						"exec": [
 							"var botresponse = JSON.parse(responseBody)",
+							"console.log(botresponse);",
 							"",
 							"pm.test(\"verify status is 200\", function(){",
 							"    pm.response.to.have.status(200)",
@@ -146,11 +148,11 @@
 							"    pm.expect(botresponse.success).to.be.true",
 							"})",
 							"",
-							"pm.test(\"verify the input is correct\", function(){",
+							"pm.test(\"verify the input is correct: \"+pm.environment.get('test_input'), function(){",
 							"    pm.expect(botresponse.data.conversation.input).to.equal(pm.environment.get('test_input'))",
 							"})",
 							"",
-							"pm.test(\"verify the output is correct\", function(){",
+							"pm.test(\"verify the output is correct: \"+pm.environment.get('expected_output'), function(){",
 							"    pm.expect(botresponse.data.conversation.output).to.equal(pm.environment.get('expected_output'))",
 							"})",
 							"",
